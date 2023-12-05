@@ -1,0 +1,30 @@
+include:
+  - ./airflow/docker-compose.yml
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    hostname: rabbitmq
+    ports: 
+      - 15672:15672
+      - 5672:5672
+
+  minio:
+    image: minio/minio:RELEASE.2023-11-06T22-26-08Z
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
+      
+  momgo-db:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  rabbit_to_minio:
+    build:
+        context: ./
+        dockerfile: Dockerfile
